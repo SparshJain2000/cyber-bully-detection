@@ -12,6 +12,7 @@ import Axios from "axios";
 const CreatePost = () => {
     const [data, setData] = useState({});
     const [logo, setLogo] = useState("");
+    const [file, setFile] = useState(null);
     const [progress, setProgress] = useState(0);
     const [img, setImg] = useState({});
     const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -41,6 +42,7 @@ const CreatePost = () => {
             }
             let reader = new FileReader();
             let file = files[0];
+            setFile(file);
             // console.log(URL.createObjectURL(file));
             // setLogo(URL.createObjectURL(file));
             reader.readAsDataURL(file);
@@ -60,9 +62,21 @@ const CreatePost = () => {
 
     const submit = async (e) => {
         e.preventDefault();
-        console.log(data, logo);
+        let post = new FormData();
+        await post.append("text", data.description);
 
-        // Axios.post("/api/post")
+        await post.append("image", file);
+
+        for (var pair of post.entries()) {
+            console.log(pair[0], pair[1]);
+        }
+
+        Axios.post("http://localhost:8080/api/post", post)
+            .then(({ data }) => {
+                console.log(data);
+                setLogo(`http://localhost:8080/${data.image}`);
+            })
+            .catch((e) => console.log(e));
     };
     return (
         <div className='col-11 col-md-10 col-lg-9 job-form mx-auto p-2 p-md-3 my-2 my-md-3'>
