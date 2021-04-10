@@ -81,7 +81,7 @@ const NavbarComponent = () => {
                             <NavLink to='/jobs'>Feed</NavLink>
                         </NavItem>
                         <NavItem className='m-1 my-2 my-lg-1'>
-                            <NavLink to='/jobs'>Create a post</NavLink>
+                            <NavLink to='/post'>Create a post</NavLink>
                         </NavItem>
                         <NavItem className='m-1 my-2 my-lg-1'>
                             <NavLink to='/professionals'>View Profile</NavLink>
