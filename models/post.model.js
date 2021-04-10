@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
-
 const { Schema } = mongoose;
-
 const PostSchema = new Schema(
     {
         author: {
@@ -29,13 +27,8 @@ const PostSchema = new Schema(
                 text: String,
             },
         ],
-        text: {
-            type: String,
-            trim: true,
-        },
-        image: {
-            type: String,
-        },
+        text: { type: String, trim: true },
+        image: { type: String },
     },
     { timestamps: true },
 );

@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import AsyncSelect from "react-select/async";
-// import Select from "react-select";
-// import cities from "../assets/cities.min.json";
-// import { types } from "../assets/data";
 import {
     Form,
     FormGroup,
@@ -12,24 +8,7 @@ import {
     Button,
     Progress,
 } from "reactstrap";
-
-const validateField = (field, value) => {
-    // console.log(field);
-    switch (field) {
-        case "location":
-            return value !== undefined && value !== null;
-        case "type":
-            return value !== undefined && value !== null && value !== "";
-        case "price":
-            return value !== "" && value !== 0;
-        case "title":
-        case "description":
-        case "date":
-            return value !== "";
-        default:
-            return false;
-    }
-};
+import Axios from "axios";
 const CreatePost = () => {
     const [data, setData] = useState({});
     const [logo, setLogo] = useState("");
@@ -57,14 +36,6 @@ const CreatePost = () => {
             ) {
                 console.log("wrong");
                 setUploadingLogo(false);
-
-                // this.setState({
-                //     loading: false,
-                //     showError2: true,
-                //     logoError: "Invalid File Format or Size",
-                //     loading: false,
-                //     uploadingLogo: false,
-                // });
                 this.logo.current.value = "";
                 return;
             }
@@ -76,76 +47,22 @@ const CreatePost = () => {
             reader.onload = () => {
                 console.log(reader.result);
                 setLogo(reader.result);
-                //     var matches = reader.result.match(
-                //         /^data:([A-Za-z-+\/]+);base64,(.+)$/,
-                //     );
-                //     var buffer = new Buffer(matches[2], "base64");
-                //     const image = {
-                //         name: `sparsh_${file.name}`,
-                //         data: buffer,
-                //         mimeType: file.type,
-                //         size: file.size,
-                //     };
-                //     console.log(image);
-                // setImg(image);
             };
         }
     };
-    // useEffect(() => {
-    //     let notDisable = true;
-    //     for (const x in valid) notDisable &= valid[x];
-    //     notDisable &= data.description !== undefined;
-    //     notDisable &= data.title !== undefined;
-    //     notDisable &= data.location !== undefined;
-    //     notDisable &= data.type !== undefined;
-    //     notDisable &= data.price !== undefined;
-    //     notDisable &= data.date !== undefined;
-    //     setDisable(!notDisable);
-    // }, [data, valid]);
     const handleChange = async (e, name) => {
-        console.log(e, name);
-        if (name === "location") {
-            setData({
-                ...data,
-                [name]: e
-                    ? {
-                          city: e.value.split(", ")[0],
-                          state: e.value.split(", ")[1],
-                          country: "",
-                      }
-                    : null,
-            });
-            await setValid({
-                ...valid,
-                [name]: validateField(name, e),
-            });
-        } else if (name === "type") {
-            setData({
-                ...data,
-                [name]: e ? e.label : null,
-            });
-            await setValid({
-                ...valid,
-                [name]: validateField(name, e),
-            });
-        } else {
-            setData({
-                ...data,
-                [e.target.name]:
-                    e.target.name === "price"
-                        ? +e.target.value
-                        : e.target.value,
-            });
-            await setValid({
-                ...valid,
-                [e.target.name]: validateField(e.target.name, e.target.value),
-            });
-        }
+        setData({
+            ...data,
+            [e.target.name]:
+                e.target.name === "price" ? +e.target.value : e.target.value,
+        });
     };
 
     const submit = async (e) => {
         e.preventDefault();
-        console.log(data);
+        console.log(data, logo);
+
+        // Axios.post("/api/post")
     };
     return (
         <div className='col-11 col-md-10 col-lg-9 job-form mx-auto p-2 p-md-3 my-2 my-md-3'>
@@ -241,8 +158,7 @@ const CreatePost = () => {
                     <FormGroup className='col-12  ml-auto mr-5 px-5'>
                         <Button
                             color='secondary'
-                            className='ml-auto float-right'
-                            disabled={disable}>
+                            className='ml-auto float-right'>
                             Create
                         </Button>
                     </FormGroup>

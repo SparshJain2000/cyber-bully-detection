@@ -7,23 +7,22 @@ const Home = () => {
     return (
         <>
             <div className='position-relative'>
-                <div className='row mx-0' style={{ minHeight: "30vh" }}>
-                    <div className='col-12 col-md-6 my-auto pl-5 '>
-                        <h1 className='text-white'>JobHub </h1>
-                        <p style={{ color: "var(--gray)" }}>
-                            A platform for connecting professionals and
-                            employers
+                <div className='row mx-0' style={{ minHeight: "40vh" }}>
+                    <div className='col-12  my-auto text-align-center'>
+                        <h1 className='text-gray'>XYZ_MEDIA </h1>
+                        <p style={{ color: "var(--black)" }}>
+                            A Social media platfom for connecting people.
                         </p>
                         <div>
                             <Link
                                 to='/professionals'
                                 className='btn btn-sm btn-secondary ml-1'>
-                                Hire Professionals
+                                View Feed
                             </Link>
                             <Link
                                 to='/jobs'
                                 className='btn btn-sm btn-outline-secondary ml-1'>
-                                Get Jobs
+                                Create a POST
                             </Link>
                         </div>
                     </div>
