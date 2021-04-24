@@ -16,6 +16,9 @@
 main {
     flex: 1;
 }
+.bg-lightbg {
+    background-color: $light-bg;
+}
 .row {
     margin-left: 0px !important;
     margin-right: 0px !important;
@@ -23,6 +26,9 @@ main {
 
 .text-align-center {
     text-align: center;
+}
+.text-align-justify {
+    text-align: justify;
 }
 
 .text-align-end {

@@ -49,7 +49,7 @@ li.nav-item {
     color: $white !important;
     font-size: 1.5rem;
     &:hover {
-        color: $secondary !important;
+        color: $highlight !important;
     }
 }
 
@@ -58,7 +58,7 @@ li.nav-item {
     a {
         color: $text-alt !important;
         &:hover {
-            color: $secondary !important;
+            color: $highlight !important;
             text-decoration: none;
         }
         .dropdown-menu-center {
@@ -68,7 +68,7 @@ li.nav-item {
         }
     }
     .active {
-        color: $secondary !important;
+        color: $highlight !important;
     }
 }
 
@@ -101,7 +101,7 @@ li.nav-item {
         -webkit-transition: all 0.2s;
         transition: all 0.2s;
         display: block;
-        background-color: $secondary;
+        background-color: $highlight;
         height: 2px;
         width: 25px;
         margin-top: 4px;
