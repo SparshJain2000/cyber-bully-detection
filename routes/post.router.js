@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const Post = require("../models/post.model");
+const Comment = require("../models/comment.model");
+const { populateComment } = require("../helper/index");
 // var Image = require("../models/image");
 const multer = require("multer");
 
@@ -27,26 +29,97 @@ const upload = multer({
     fileFilter: fileFilter,
 });
 router.get("/", async (req, res) => {
-    const posts = await Post.find().lean();
-    res.json({ feed: posts });
+    try {
+        let posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .populate({
+                path: "comments",
+                populate: {
+                    path: "id",
+                    model: "Comment",
+                },
+            })
+            .lean();
+        res.json({
+            feed: posts.map((post) => {
+                return {
+                    ...post,
+                    comments: post.comments.map((comment) => {
+                        const id = comment.id;
+                        return {
+                            ...comment,
+                            id: id.id,
+                            author: id.author,
+                            createdAt: id.createdAt,
+                        };
+                    }),
+                };
+            }),
+        });
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 router.post("/", upload.single("image"), async (req, res) => {
-    console.log(req.file.path);
-    const post = new Post({
-        text: req.body.text,
-        image: req.file.path,
-        // body: req.body.body,
-        // date: new Date(),
-        likes: [],
-        comments: [],
-        author: {
-            id: "60847b1b2b880028309ac280",
-            username: "Raghav Agarwal",
-        },
-    });
-    console.log(post);
-    // await post.save();
-    res.json({ status: "posted", post: post, image: req.file.path });
+    try {
+        console.log(req.file.path);
+        const post = new Post({
+            text: req.body.text,
+            image: req.file.path,
+            // body: req.body.body,
+            // date: new Date(),
+            likes: [],
+            comments: [],
+            author: {
+                id: "60847d8640310c1cb0e7b5ea",
+                username: "Jayant Malik",
+            },
+        });
+        console.log(post);
+        // await post.save();
+        res.json({ status: "posted", post: post, image: req.file.path });
+    } catch (err) {
+        res.json({ status: "Error" });
+    }
+});
+router.post("/comment", async (req, res) => {
+    try {
+        post = await Post.findById(req.body.id);
+        const comment = new Comment({
+            text: req.body.comment,
+            author: {
+                id: "60847d8640310c1cb0e7b5ea",
+                username: "Jayant Malik",
+            },
+        });
+        post.comments = [
+            ...post.comments,
+            { id: comment._id, text: comment.text },
+        ];
+        console.log(post);
+        await comment.save();
+        await post.save();
+
+        res.json({ status: "added", post: post });
+    } catch (err) {
+        res.json({ status: "Error" });
+        console.log(err);
+    }
+});
+router.post("/like", async (req, res) => {
+    try {
+        post = await Post.findById(req.body.id);
+        post.likes = [
+            ...post.likes,
+            { id: req.user.id, username: req.user.username },
+        ];
+        console.log(post);
+        await post.save();
+        res.json({ status: "liked", post: post });
+    } catch (err) {
+        res.json({ status: "Error" });
+        console.log(err);
+    }
 });
 module.exports = router;
