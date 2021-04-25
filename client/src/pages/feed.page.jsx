@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import Item from "../components/item.component";
@@ -6,9 +6,9 @@ import data from "../assets/data";
 import img from "../assets/PNG/Transparent/19 Coming soon.png";
 // import AnimatedBackground from "../components/animatedBackground.component";
 // import { types, images } from "../assets/data";
+import axios from "axios";
 import { Button } from "reactstrap";
 const Items = ({ feed }) => {
-    console.log(data);
     return (
         <div className='row flex-row m-2 p-2'>
             {feed && feed.length === 0 ? (
@@ -17,12 +17,19 @@ const Items = ({ feed }) => {
                     <img src={img} className='img-fluid' alt='' />
                 </p>
             ) : (
-                data?.feed?.map((item) => <Item key={item._id} item={item} />)
+                feed?.map((item) => <Item key={item._id} item={item} />)
             )}
         </div>
     );
 };
 const Feed = () => {
+    const [data, setdata] = useState([]);
+    useEffect(() => {
+        axios
+            .get("/api/post")
+            .then(({ data }) => setdata(data))
+            .catch((err) => console.log(err));
+    }, []);
     return (
         <>
             <div className='flex-grow-1 pt-3  position-relative'>
