@@ -12,6 +12,18 @@
     }
 }
 .card {
+    .new-comment {
+        font-size: 0.8rem;
+        strong {
+            white-space: nowrap;
+        }
+    }
+    #comment {
+        font-size: 0.8rem;
+    }
+    #comment::placeholder {
+        font-size: 0.8rem;
+    }
     .content {
         height: fit-content;
         margin-top: auto;
@@ -20,6 +32,7 @@
     .like {
         color: $highlight;
         margin-right: 0.4rem;
+        cursor: pointer;
     }
     transition: 0.4s ease-in-out;
     &:hover {
@@ -27,7 +40,7 @@
         transition: 0.4s ease-in-out;
     }
     img {
-        border-radius: 1.5em;
+        border-radius: 0.4rem;
         box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.7);
         transition: 2s ease-in-out;
     }
