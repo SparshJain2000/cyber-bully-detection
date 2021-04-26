@@ -8,8 +8,18 @@ import {
     Button,
     Progress,
 } from "reactstrap";
+import { useHistory } from "react-router-dom";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faAngleDown,
+    faAngleUp,
+    faThumbsUp,
+    faUpload,
+} from "@fortawesome/free-solid-svg-icons";
 import Axios from "axios";
 const CreatePost = () => {
+    let history = useHistory();
     const [data, setData] = useState({});
     const [logo, setLogo] = useState("");
     const [file, setFile] = useState(null);
@@ -71,21 +81,27 @@ const CreatePost = () => {
             console.log(pair[0], pair[1]);
         }
 
-        Axios.post("http://localhost:8080/api/post", post)
+        Axios.post("http://localhost:8080/api/post", post, {
+            headers: {
+                Authorization:
+                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDg0N2IxYjJiODgwMDI4MzA5YWMyODAiLCJlbWFpbCI6InJhZ2hhdkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJhZ2hhdiBBZ2Fyd2FsIiwiaWF0IjoxNjE5NDQ2NTU1LCJleHAiOjE2MTk0NTAxNTV9.MsOHgcjTKz2FeQ2MGfLSanBnyRjfPrrTegRpar9pXfU",
+            },
+        })
             .then(({ data }) => {
                 console.log(data);
                 setLogo(`http://localhost:8080/${data.image}`);
+                history.push("/feed");
             })
-            .catch((e) => console.log(e));
+            .catch(({ response }) => console.log(response));
     };
     return (
         <div className='col-11 col-md-10 col-lg-9 job-form mx-auto p-2 p-md-3 my-2 my-md-3'>
-            <h2>Create a POST</h2>
+            <h2>Create a Post</h2>
             <hr className='col-10 col-md-3 header-line mx-0' />
 
             <Form onSubmit={submit}>
-                <div className='row mx-5'>
-                    <div className='col-12 px-5'>
+                <div className='row mx-md-5'>
+                    <div className='col-12 px-2 px-md-5'>
                         <div className='col-12 text-align-center'>
                             {logo && logo !== "" && (
                                 <img
@@ -113,7 +129,7 @@ const CreatePost = () => {
                             </div>
                             <div className='mx-auto mx-sm-2'>
                                 <div className='my-1 mt-3'>
-                                    <div className=''>
+                                    <div className='flex-row-center '>
                                         <button className='btn btn-secondary m-2 btn-float'>
                                             <label
                                                 htmlFor='logo'
@@ -123,7 +139,15 @@ const CreatePost = () => {
                                                     cursor: "pointer",
                                                     width: "100%",
                                                 }}>
-                                                Upload Logo
+                                                {logo && logo !== ""
+                                                    ? "Change Image"
+                                                    : "Upload Image"}
+
+                                                <FontAwesomeIcon
+                                                    icon={faUpload}
+                                                    className='like ml-2'
+                                                    title='Like the post'
+                                                />
                                             </label>
                                         </button>
 
@@ -147,7 +171,7 @@ const CreatePost = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='col-12 px-5 '>
+                    <div className='col-12 px-2 px-md-5 mt-5'>
                         <FormGroup>
                             <Label className='job-title'>
                                 <h6>Caption</h6>
@@ -165,15 +189,15 @@ const CreatePost = () => {
                                 }
                             />
                             <FormFeedback>
-                                Please enter a valid Description
+                                Please enter a valid Caption
                             </FormFeedback>
                         </FormGroup>
                     </div>
-                    <FormGroup className='col-12  ml-auto mr-5 px-5'>
+                    <FormGroup className='col-12  ml-auto mr-5 px-2 px-md-5'>
                         <Button
                             color='secondary'
                             className='ml-auto float-right'>
-                            Create
+                            POST
                         </Button>
                     </FormGroup>
                 </div>
