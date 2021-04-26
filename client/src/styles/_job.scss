@@ -30,6 +30,10 @@
         margin-bottom: auto;
     }
     .like {
+        margin-right: 0.4rem;
+        cursor: pointer;
+    }
+    .liked {
         color: $highlight;
         margin-right: 0.4rem;
         cursor: pointer;

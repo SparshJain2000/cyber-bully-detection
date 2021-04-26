@@ -7,9 +7,9 @@
         border-bottom-left-radius: 0.25rem;
     }
     .form {
-        border: 0.05em solid $gray;
+        border: 0.05em solid $secondary;
         border-radius: 0.5rem;
-        background-color: $highlight;
+        background-color: $light-primary;
         padding: 3em;
         height: fit-content;
         margin-top: auto;
@@ -21,25 +21,25 @@
         h2,
         h5,
         h6 {
-            color: $light;
+            color: $secondary;
         }
         input {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba($secondary, 0.1);
+            color: $secondary;
+            border-color: rgba($secondary, 0.2);
             &:focus {
-                background-color: rgba(255, 255, 255, 0.1);
-                color: white;
+                background-color: rgba($secondary, 0.1);
+                color: $secondary;
             }
             &::placeholder {
-                color: $light-gray;
+                // color: $light-gray;
             }
         }
         a {
-            color: $secondary;
+            color: $primary;
         }
         @media only screen and (max-width: 767px) {
-            padding: 1.8em;
+            padding: 1.3em;
         }
         button {
             @media only screen and (max-width: 767px) {
@@ -48,7 +48,7 @@
         }
         .input-group-text {
             color: $white;
-            background-color: $secondary;
+            background-color: $highlight;
             border: 0px;
         }
     }

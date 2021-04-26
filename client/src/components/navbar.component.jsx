@@ -69,7 +69,7 @@ const NavbarComponent = () => {
                     <Nav
                         className='row justify-content-center pl-5 pr-3 w-100'
                         navbar>
-                        <NavItem className='m-1 my-2 my-lg-1 ml-auto'>
+                        <NavItem className='m-1 my-2 my-lg-1 ml-lg-auto'>
                             <NavLink to='/' exact>
                                 Home
                             </NavLink>
@@ -78,13 +78,13 @@ const NavbarComponent = () => {
                             <NavLink to='/about'>About</NavLink>
                         </NavItem>
                         <NavItem className='m-1 my-2 my-lg-1'>
-                            <NavLink to='/jobs'>Feed</NavLink>
+                            <NavLink to='/feed'>Feed</NavLink>
                         </NavItem>
                         <NavItem className='m-1 my-2 my-lg-1'>
                             <NavLink to='/post'>Create a post</NavLink>
                         </NavItem>
                         <NavItem className='m-1 my-2 my-lg-1'>
-                            <NavLink to='/professionals'>View Profile</NavLink>
+                            <NavLink to='/auth/login'>Login</NavLink>
                         </NavItem>
 
                         {/* <NavItem className={`m-1 my-2 my-lg-1 ml-lg-auto}`}>

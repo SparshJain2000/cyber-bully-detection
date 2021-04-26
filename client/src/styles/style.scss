@@ -51,6 +51,7 @@ main {
     &:hover {
         color: $secondary !important;
         text-decoration: underline;
+        cursor: pointer;
     }
 }
 a {

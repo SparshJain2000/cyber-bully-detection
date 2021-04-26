@@ -58,6 +58,11 @@
 }
 
 .card .like {
+  margin-right: 0.4rem;
+  cursor: pointer;
+}
+
+.card .liked {
   color: #f9bf16;
   margin-right: 0.4rem;
   cursor: pointer;
@@ -967,7 +972,7 @@ footer .icons .social:hover {
 
 @media only screen and (max-width: 767px) {
   .auth .form {
-    padding: 1.8em;
+    padding: 1.3em;
   }
 }
 
@@ -1048,6 +1053,7 @@ main {
 .link:hover {
   color: #5b55ff !important;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 a {
