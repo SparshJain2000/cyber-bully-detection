@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Card, CardTitle, CardText, Input, Label, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,12 +9,21 @@ import {
     faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-const Item = ({ item }) => {
+const Item = ({ post }) => {
+    const [item, setitem] = useState(post);
+    useEffect(() => {
+        setitem(post);
+        setliked(
+            post.likes.filter((like) => like.username === "Raghav Agarwal")
+                .length !== 0,
+        );
+    }, [post]);
     const [reviewToggle, setReviewToggle] = useState(false);
     const [addComment, setaddComment] = useState(false);
+    const [liked, setliked] = useState(false);
     const [comment, setcomment] = useState("");
     const days = parseInt(
-        (new Date() - new Date(item.updatedAt)) / (1000 * 60 * 60 * 24),
+        (new Date() - new Date(item.createdAt)) / (1000 * 60 * 60 * 24),
         10,
     );
     const handleChange = (e) => setcomment(e.target.value);
@@ -25,24 +34,72 @@ const Item = ({ item }) => {
             id: item._id,
         };
         axios
-            .post("/api/post/comment", query)
-            .then((data) => console.log(data))
-            .catch((err) => console.log(err));
+            .post("/api/post/comment", query, {
+                headers: {
+                    Authorization:
+                        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDg0N2IxYjJiODgwMDI4MzA5YWMyODAiLCJlbWFpbCI6InJhZ2hhdkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJhZ2hhdiBBZ2Fyd2FsIiwiaWF0IjoxNjE5NDQ2NTU1LCJleHAiOjE2MTk0NTAxNTV9.MsOHgcjTKz2FeQ2MGfLSanBnyRjfPrrTegRpar9pXfU",
+                },
+            })
+            .then(({ data }) => {
+                console.log(data);
+
+                setitem({
+                    ...item,
+                    comments: [...item.comments, data.comment],
+                });
+                setaddComment(false);
+                setReviewToggle(true);
+            })
+            .catch((err) => console.log(err, err.response));
+    };
+    const like = () => {
+        axios
+            .post(
+                "/api/post/like",
+                { id: item._id },
+                {
+                    headers: {
+                        Authorization:
+                            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDg0N2IxYjJiODgwMDI4MzA5YWMyODAiLCJlbWFpbCI6InJhZ2hhdkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJhZ2hhdiBBZ2Fyd2FsIiwiaWF0IjoxNjE5NDQ2NTU1LCJleHAiOjE2MTk0NTAxNTV9.MsOHgcjTKz2FeQ2MGfLSanBnyRjfPrrTegRpar9pXfU",
+                    },
+                },
+            )
+            .then(({ data }) => {
+                console.log(data);
+                setliked(true);
+                setitem({ ...item, likes: data.post.likes });
+            })
+            .catch((err) => console.log(err, err.response));
     };
     return (
         <Card className='row flex-row w-100 m-1 '>
-            <div className='col-12 col-md-4 col-lg-3 p-2 my-auto'>
+            <div className='col-12 col-md-4 p-2 my-auto'>
                 <img src={item.image} className='img-fluid' alt='photu' />
             </div>
-            <div className='col-12 col-md-8 col-lg-9 p-3 content'>
+            <div className='col-12 col-md-8 p-3 content'>
                 <CardTitle tag='h5'>{item.title}</CardTitle>
                 <CardText>
-                    <FontAwesomeIcon
-                        icon={faThumbsUp}
-                        className='like'
-                        title='Like the post'
-                    />
-                    {item.likes.length} Likes
+                    <span>
+                        <FontAwesomeIcon
+                            icon={faThumbsUp}
+                            className={`like ${liked && "liked"}`}
+                            title='Like the post'
+                            onClick={like}
+                        />
+                        {item.likes.length} Likes
+                        {item.likes.length > 0 && (
+                            <span>
+                                {" "}
+                                | Liked By{" "}
+                                {item.likes.slice(0, 2).map((like, i) => (
+                                    <a href='/feed'>
+                                        {like.username}
+                                        {i == item.likes.length - 1 ? "" : ", "}
+                                    </a>
+                                ))}
+                            </span>
+                        )}
+                    </span>
                     <br />
                     <strong>{item.author.username} : </strong>
                     {item.text.slice(0, 100)} ...
@@ -114,7 +171,10 @@ const Item = ({ item }) => {
                         </div>
                     )}
                     <small className='text-muted'>
-                        Last updated {days === 0 ? "today" : `${days} days ago`}
+                        Posted{" "}
+                        {days === 0
+                            ? "today"
+                            : `${days} day${days === 1 ? "" : "s"} ago`}
                     </small>
                 </CardText>
             </div>

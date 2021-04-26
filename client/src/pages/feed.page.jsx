@@ -17,7 +17,7 @@ const Items = ({ feed }) => {
                     <img src={img} className='img-fluid' alt='' />
                 </p>
             ) : (
-                feed?.map((item) => <Item key={item._id} item={item} />)
+                feed?.map((item) => <Item key={item._id} post={item} />)
             )}
         </div>
     );
@@ -36,7 +36,9 @@ const Feed = () => {
                 <h4 className='text-align-center'>Your Feed</h4>
 
                 <hr />
-                <Items feed={data.feed} />
+                <div className='col-12 col-md-10 col-lg-9 col-xl-8 mx-auto px-0'>
+                    <Items feed={data.feed} />
+                </div>
             </div>
         </>
     );
