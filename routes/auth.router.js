@@ -6,15 +6,15 @@ const router = require("express").Router(),
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!user) res.status(500).json({ err: "INVALID_EMAIL" });
+    if (!user) return res.status(500).json({ err: "INVALID_EMAIL" });
     const isEqual = await bcrypt.compare(password, user.password);
-    if (!isEqual) res.status(500).json({ err: "INVALID_PASSWORD" });
+    if (!isEqual) return res.status(500).json({ err: "INVALID_PASSWORD" });
     const token = await jwt.sign(
         { userId: user.id, email: user.email, username: user.name },
         process.env.SECRET,
         { expiresIn: "1h" },
     );
-    res.json({
+    return res.json({
         user: { userId: user.id, email: user.email, username: user.name },
         token,
         tokenExpiration: 1,
