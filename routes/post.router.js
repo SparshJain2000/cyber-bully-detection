@@ -17,7 +17,11 @@ const storage = multer.diskStorage({
     },
 });
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    console.log(req.isAuth);
+    if (
+        req.isAuth &&
+        (file.mimetype === "image/jpeg" || file.mimetype === "image/png")
+    ) {
         cb(null, true);
     } else {
         // rejects storing a file
@@ -64,27 +68,27 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.post("/", upload.single("image"), async (req, res) => {
-    try {
-        console.log(req.file.path);
-        const post = new Post({
-            text: req.body.text,
-            image: req.file.path,
-            // body: req.body.body,
-            // date: new Date(),
-            likes: [],
-            comments: [],
-            author: {
-                id: "60847d8640310c1cb0e7b5ea",
-                username: "Jayant Malik",
-            },
-        });
-        console.log(post);
-        // await post.save();
-        res.json({ status: "posted", post: post, image: req.file.path });
-    } catch (err) {
-        res.json({ status: "Error" });
-    }
+router.post("/", verifyToken, upload.single("image"), async (req, res) => {
+    if (req.isAuth) {
+        try {
+            console.log(req.file.path);
+            const post = new Post({
+                text: req.body.text,
+                image: req.file.path,
+                likes: [],
+                comments: [],
+                author: {
+                    id: req.user.id,
+                    username: req.user.username,
+                },
+            });
+            console.log(post);
+            await post.save();
+            res.json({ status: "posted", post: post, image: req.file.path });
+        } catch (err) {
+            res.status(500).json({ error: "SERVER_ERROR" });
+        }
+    } else res.status(500).json({ error: "NOT_AUTHORIZED" });
 });
 router.post("/comment", verifyToken, async (req, res) => {
     if (req.isAuth) {
@@ -101,36 +105,39 @@ router.post("/comment", verifyToken, async (req, res) => {
                 ...post.comments,
                 { id: comment._id, text: comment.text },
             ];
-            // console.log(req.user);
             await comment.save();
             await post.save();
 
-            res.json({ status: "added", post: post });
+            return res.json({ status: "added", post: post, comment: comment });
         } catch (err) {
-            res.json({ status: "Error" });
+            return res.status(500).json({ error: "SERVER_ERROR" });
             console.log(err);
         }
-    } else res.json({ err: "NOT_AUTH" });
+    }
+    res.status(500).json({ error: "NOT_AUTHORIZED" });
 });
 router.post("/like", verifyToken, async (req, res) => {
-    try {
-        post = await Post.findById(req.body.id);
-        const x = post.likes.filter((like) => {
-            console.log(like.id, req.user.id);
-            return like.id == req.user.id;
-        });
-        console.log(x);
-        if (x.length) return res.json({ err: "Already Liked" });
-        post.likes = [
-            ...post.likes,
-            { id: req.user.id, username: req.user.username },
-        ];
-        // console.log(post);
-        // await post.save();
-        res.json({ status: "liked", post: post });
-    } catch (err) {
-        res.json({ status: "Error" });
-        console.log(err);
-    }
+    if (req.isAuth) {
+        try {
+            post = await Post.findById(req.body.id);
+            const x = post.likes.filter((like) => {
+                console.log(like.id, req.user.id);
+                return like.id == req.user.id;
+            });
+            console.log(x);
+            if (x.length)
+                return res.status(500).json({ error: "ALREADY_LIKED" });
+            post.likes = [
+                ...post.likes,
+                { id: req.user.id, username: req.user.username },
+            ];
+            console.log(post);
+            await post.save();
+            res.json({ status: "liked", post: post });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ error: "SERVER_ERROR" });
+        }
+    } else res.status(500).json({ error: "NOT_AUTHORIZED" });
 });
 module.exports = router;
