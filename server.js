@@ -4,6 +4,7 @@ const bodyParser = require("body-parser"),
     cors = require("cors"),
     postRouter = require("./routes/post.router"),
     userRouter = require("./routes/user.router"),
+    authRouter = require("./routes/auth.router"),
     User = require("./models/user.model");
 app = express();
 require("dotenv").config();
@@ -47,6 +48,7 @@ app.use(bodyParser.json());
 app.use("/data", express.static("data"));
 app.use("/api/post", postRouter);
 app.use("/api/user", userRouter);
+app.use("/api/auth", authRouter);
 const MONGO_URI = `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster0.8bvsg.mongodb.net/cyber_bully_db?retryWrites=true&w=majority`;
 
 mongoose
