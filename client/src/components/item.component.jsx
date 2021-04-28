@@ -10,9 +10,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import AuthContext from "../context/auth.context";
 import axios from "axios";
+import Loader from "./loader.component";
 const Item = ({ post }) => {
     const context = useContext(AuthContext);
     const [item, setitem] = useState(post);
+    const [imgLoaded, setimgloaded] = useState(false);
     useEffect(() => {
         setitem(post);
         setliked(
@@ -84,7 +86,20 @@ const Item = ({ post }) => {
     return (
         <Card className='row flex-row w-100 m-1 '>
             <div className='col-12 col-md-4 p-2 my-auto'>
-                <img src={item.image} className='img-fluid' alt='photu' />
+                <img
+                    src={item.image}
+                    className={`img-fluid smooth-image image-${
+                        imgLoaded ? "visible" : "hidden"
+                    }`}
+                    alt='photu'
+                    onLoad={() => setimgloaded(true)}
+                />
+
+                {!imgLoaded && (
+                    <div className='my-auto'>
+                        <Loader />
+                    </div>
+                )}
             </div>
             <div className='col-12 col-md-8 p-3 content'>
                 <CardTitle tag='h5'>{item.title}</CardTitle>
@@ -92,8 +107,10 @@ const Item = ({ post }) => {
                     <span>
                         <FontAwesomeIcon
                             icon={faThumbsUp}
-                            className={`like ${liked && "liked"}`}
-                            title='Like the post'
+                            title={`${
+                                liked ? "Already liked" : "Like the post"
+                            }`}
+                            className={`like ${liked && "liked unauth"}`}
                             onClick={like}
                         />
                         {item.likes.length} Likes
