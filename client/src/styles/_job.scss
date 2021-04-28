@@ -108,3 +108,12 @@
         transition: 0.5s ease-in-out;
     }
 }
+.smooth-image {
+    transition: opacity 1s;
+}
+.image-visible {
+    opacity: 1;
+}
+.image-hidden {
+    opacity: 0;
+}

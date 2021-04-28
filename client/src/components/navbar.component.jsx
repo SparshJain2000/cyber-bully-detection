@@ -75,9 +75,9 @@ const NavbarComponent = () => {
                                 Home
                             </NavLink>
                         </NavItem>
-                        <NavItem className='m-1 my-2 my-lg-1'>
+                        {/* <NavItem className='m-1 my-2 my-lg-1'>
                             <NavLink to='/about'>About</NavLink>
-                        </NavItem>
+                        </NavItem> */}
                         <NavItem className='m-1 my-2 my-lg-1'>
                             <NavLink to='/feed'>Feed</NavLink>
                         </NavItem>

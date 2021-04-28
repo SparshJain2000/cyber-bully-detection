@@ -93,7 +93,8 @@ const Auth = () => {
                     console.log(data);
                     const { token, tokenExpiration, user } = data;
                     context.login(token, tokenExpiration, user);
-                    history.goBack();
+
+                    history.push("/");
                 })
                 .catch(({ response }) => {
                     setErrorModal(true);
@@ -106,7 +107,7 @@ const Auth = () => {
                             ? "User already registered"
                             : "Something went wrong. Please try again later",
                     );
-                    console.log(response.data.err);
+                    console.log(response?.data?.err);
                 });
         } catch (e) {
             console.log(e.message);

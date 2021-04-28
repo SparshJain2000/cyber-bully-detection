@@ -39,7 +39,9 @@ const Feed = () => {
                     </div>
                 </div>
             ) : (
-                <Loader />
+                <div className='my-auto'>
+                    <Loader />
+                </div>
             )}
         </>
     );
