@@ -18,7 +18,7 @@ import {
     FormFeedback,
 } from "reactstrap";
 import axios from "axios";
-// import AuthContext from "../context/auth.context";
+import AuthContext from "../context/auth.context";
 const validateEmail = (email) => {
     const re = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     return re.test(email);
@@ -46,7 +46,7 @@ const validateField = (field, value) => {
 const Auth = () => {
     const location = useLocation();
     const history = useHistory();
-    // const context = useContext(AuthContext);
+    const context = useContext(AuthContext);
 
     const [errorMsg, setErrorMsg] = useState("");
     const [errorModal, setErrorModal] = useState(false);
@@ -89,7 +89,12 @@ const Auth = () => {
             console.log(creds);
             axios
                 .post(`/api/auth/${isLogin ? `login` : `signup`}`, creds)
-                .then((data) => console.log(data))
+                .then(({ data }) => {
+                    console.log(data);
+                    const { token, tokenExpiration, user } = data;
+                    context.login(token, tokenExpiration, user);
+                    history.goBack();
+                })
                 .catch(({ response }) => {
                     setErrorModal(true);
                     setErrorMsg(
@@ -98,13 +103,11 @@ const Auth = () => {
                             : response?.data?.err === "INVALID_EMAIL"
                             ? "User not registered"
                             : response?.data?.err === "EMAIL_EXISTS"
-                            ? "User not registered"
+                            ? "User already registered"
                             : "Something went wrong. Please try again later",
                     );
                     console.log(response.data.err);
                 });
-
-            // history.goBack();
         } catch (e) {
             console.log(e.message);
             setErrorModal(true);
