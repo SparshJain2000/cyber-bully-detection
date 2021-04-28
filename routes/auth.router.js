@@ -15,7 +15,7 @@ router.post("/login", async (req, res) => {
         { expiresIn: "1h" },
     );
     return res.json({
-        user: { userId: user.id, email: user.email, username: user.name },
+        user: { id: user.id, email: user.email, username: user.name },
         token,
         tokenExpiration: 1,
     });
@@ -42,15 +42,14 @@ router.post("/signup", async (req, res) => {
             process.env.SECRET,
             { expiresIn: "1h" },
         );
-        res.json({
-            userId: result.id,
+        return res.json({
+            user: { id: result.id, email: result.email, username: result.name },
             token,
             tokenExpiration: 1,
-            isEmployer: true,
         });
     } catch (err) {
         console.log(err);
-        res.status(500).json({ err });
+        return res.status(500).json({ err });
     }
 });
 module.exports = router;
