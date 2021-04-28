@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import Loader from "../components/loader.component";
 import Item from "../components/item.component";
 import img from "../assets/PNG/Transparent/19 Coming soon.png";
 // import AnimatedBackground from "../components/animatedBackground.component";
@@ -20,7 +20,7 @@ const Items = ({ feed }) => {
     );
 };
 const Feed = () => {
-    const [data, setdata] = useState([]);
+    const [data, setdata] = useState(null);
     useEffect(() => {
         axios
             .get("/api/post")
@@ -29,14 +29,18 @@ const Feed = () => {
     }, []);
     return (
         <>
-            <div className='flex-grow-1 pt-3  position-relative'>
-                <h4 className='text-align-center'>Your Feed</h4>
+            {data ? (
+                <div className='flex-grow-1 pt-3  position-relative'>
+                    <h4 className='text-align-center'>Your Feed</h4>
 
-                <hr />
-                <div className='col-12 col-md-10 col-lg-9 col-xl-8 mx-auto px-0'>
-                    <Items feed={data.feed} />
+                    <hr />
+                    <div className='col-12 col-md-10 col-lg-9 col-xl-8 mx-auto px-0'>
+                        <Items feed={data.feed} />
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <Loader />
+            )}
         </>
     );
 };
