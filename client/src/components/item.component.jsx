@@ -8,16 +8,19 @@ import {
     faPlusSquare,
     faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
+import AuthContext from "../context/auth.context";
 import axios from "axios";
 const Item = ({ post }) => {
+    const context = useContext(AuthContext);
     const [item, setitem] = useState(post);
     useEffect(() => {
         setitem(post);
         setliked(
-            post.likes.filter((like) => like.username === "Raghav Agarwal")
-                .length !== 0,
+            post.likes.filter(
+                (like) => like.username === context?.user?.username,
+            ).length !== 0,
         );
-    }, [post]);
+    }, [post, context]);
     const [reviewToggle, setReviewToggle] = useState(false);
     const [addComment, setaddComment] = useState(false);
     const [liked, setliked] = useState(false);
@@ -28,7 +31,12 @@ const Item = ({ post }) => {
     );
     const handleChange = (e) => setcomment(e.target.value);
     const postComment = () => {
+        if (!context.token) {
+            alert("<a>Login First</a>");
+            return;
+        }
         console.log(comment);
+
         const query = {
             comment,
             id: item._id,
@@ -36,8 +44,7 @@ const Item = ({ post }) => {
         axios
             .post("/api/post/comment", query, {
                 headers: {
-                    Authorization:
-                        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDg0N2IxYjJiODgwMDI4MzA5YWMyODAiLCJlbWFpbCI6InJhZ2hhdkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJhZ2hhdiBBZ2Fyd2FsIiwiaWF0IjoxNjE5NDQ2NTU1LCJleHAiOjE2MTk0NTAxNTV9.MsOHgcjTKz2FeQ2MGfLSanBnyRjfPrrTegRpar9pXfU",
+                    Authorization: `Bearer ${context.token}`,
                 },
             })
             .then(({ data }) => {
@@ -53,14 +60,17 @@ const Item = ({ post }) => {
             .catch((err) => console.log(err, err.response));
     };
     const like = () => {
+        if (!context.token) {
+            alert("Login First");
+            return;
+        }
         axios
             .post(
                 "/api/post/like",
                 { id: item._id },
                 {
                     headers: {
-                        Authorization:
-                            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDg0N2IxYjJiODgwMDI4MzA5YWMyODAiLCJlbWFpbCI6InJhZ2hhdkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJhZ2hhdiBBZ2Fyd2FsIiwiaWF0IjoxNjE5NDQ2NTU1LCJleHAiOjE2MTk0NTAxNTV9.MsOHgcjTKz2FeQ2MGfLSanBnyRjfPrrTegRpar9pXfU",
+                        Authorization: `Bearer ${context.token}`,
                     },
                 },
             )
@@ -124,7 +134,7 @@ const Item = ({ post }) => {
                             </span>
                         )}
                         <span
-                            className='link'
+                            className={`link ${context.token ? "" : "unauth"}`}
                             onClick={() => setaddComment(!addComment)}>
                             <FontAwesomeIcon
                                 className='mr-1'
@@ -147,7 +157,7 @@ const Item = ({ post }) => {
                     {addComment && (
                         <div className='d-flex flex-row new-comment'>
                             <Label className='d-flex flex-column justify-content-center m-0'>
-                                <strong>Current User : </strong>
+                                <strong>{context?.user?.username} : </strong>
                             </Label>
                             <div className='flex-grow-1 ml-1 d-flex flex-row justify-content-between'>
                                 <Input

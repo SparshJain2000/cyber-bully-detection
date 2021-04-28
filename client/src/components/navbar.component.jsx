@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
 import { NavLink, Link } from "react-router-dom";
 // import logo from "../assets/logo.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import {
     Collapse,
     Navbar,
@@ -14,14 +16,13 @@ import {
     DropdownMenu,
 } from "reactstrap";
 // import { types } from "../assets/data";
-// import AuthContext from "../context/auth.context";
+import AuthContext from "../context/auth.context";
 
 const NavbarComponent = () => {
-    // const context = useContext(AuthContext);
+    const context = useContext(AuthContext);
     const [error] = useState("");
     const [showError, setShowError] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-
     const toggle = () => setIsOpen(!isOpen);
 
     return (
@@ -83,13 +84,36 @@ const NavbarComponent = () => {
                         <NavItem className='m-1 my-2 my-lg-1'>
                             <NavLink to='/post'>Create a post</NavLink>
                         </NavItem>
-                        <NavItem className='m-1 my-2 my-lg-1'>
-                            <NavLink to='/auth/login'>Login</NavLink>
-                        </NavItem>
-
-                        {/* <NavItem className={`m-1 my-2 my-lg-1 ml-lg-auto}`}>
-                            <NavLink to='/employer/auth/login'>Login</NavLink>
-                        </NavItem> */}
+                        {context.token ? (
+                            <NavItem className='m-1 my-2 my-lg-1'>
+                                <NavLink to='/feed' className='active'>
+                                    <FontAwesomeIcon
+                                        size='lg'
+                                        icon={faUserCircle}
+                                        className='mr-1'
+                                    />
+                                    {context.user.username}
+                                </NavLink>
+                                <UncontrolledDropdown
+                                    nav
+                                    inNavbar
+                                    className='display-inline px-0'>
+                                    <DropdownToggle
+                                        nav
+                                        caret
+                                        className='display-inline px-0'></DropdownToggle>
+                                    <DropdownMenu className='dropdown-menu-right'>
+                                        <DropdownItem onClick={context.logout}>
+                                            Logout
+                                        </DropdownItem>
+                                    </DropdownMenu>
+                                </UncontrolledDropdown>
+                            </NavItem>
+                        ) : (
+                            <NavItem className='m-1 my-2 my-lg-1'>
+                                <NavLink to='/auth/login'>Login</NavLink>
+                            </NavItem>
+                        )}
                     </Nav>
                 </Collapse>
             </Navbar>

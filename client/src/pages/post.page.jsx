@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
     Form,
     FormGroup,
@@ -17,8 +17,10 @@ import {
     faThumbsUp,
     faUpload,
 } from "@fortawesome/free-solid-svg-icons";
+import AuthContext from "../context/auth.context";
 import Axios from "axios";
 const CreatePost = () => {
+    const context = useContext(AuthContext);
     let history = useHistory();
     const [data, setData] = useState({});
     const [logo, setLogo] = useState("");
@@ -83,8 +85,7 @@ const CreatePost = () => {
 
         Axios.post("http://localhost:8080/api/post", post, {
             headers: {
-                Authorization:
-                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDg0N2IxYjJiODgwMDI4MzA5YWMyODAiLCJlbWFpbCI6InJhZ2hhdkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IlJhZ2hhdiBBZ2Fyd2FsIiwiaWF0IjoxNjE5NDQ2NTU1LCJleHAiOjE2MTk0NTAxNTV9.MsOHgcjTKz2FeQ2MGfLSanBnyRjfPrrTegRpar9pXfU",
+                Authorization: `Bearer ${context.token}`,
             },
         })
             .then(({ data }) => {
@@ -196,7 +197,8 @@ const CreatePost = () => {
                     <FormGroup className='col-12  ml-auto mr-5 px-2 px-md-5'>
                         <Button
                             color='secondary'
-                            className='ml-auto float-right'>
+                            className='ml-auto float-right'
+                            disabled={!context.token}>
                             POST
                         </Button>
                     </FormGroup>
