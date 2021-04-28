@@ -7,6 +7,21 @@ import Navbar from "./components/navbar.component";
 import AuthContext from "./context/auth.context";
 import { Component } from "react";
 import Loader from "./components/loader.component";
+const ProtectedRoute = ({ component: Comp, loggedIn, path, ...rest }) => {
+    return (
+        <Route
+            path={path}
+            {...rest}
+            render={(props) => {
+                return loggedIn ? (
+                    <Comp {...props} />
+                ) : (
+                    <Redirect to='/auth/login' />
+                );
+            }}
+        />
+    );
+};
 class App extends Component {
     state = {
         loading: true,
@@ -60,13 +75,26 @@ class App extends Component {
                     }}>
                     <Navbar />
                     {this.state.loading ? (
-                        <Loader />
+                        <div className='my-30vh'>
+                            <Loader />
+                        </div>
                     ) : (
                         <main className='d-flex flex-column'>
                             <Switch>
                                 <Route path='/' exact component={Home} />
-                                <Route path='/post' exact component={Post} />
-                                <Route path='/feed' exact component={Feed} />
+                                <ProtectedRoute
+                                    path='/post'
+                                    loggedIn={this.state.token}
+                                    exact
+                                    component={Post}
+                                />
+                                <ProtectedRoute
+                                    loggedIn={this.state.token}
+                                    path='/feed'
+                                    exact
+                                    component={Feed}
+                                />
+
                                 <Route
                                     path='/auth/login'
                                     exact
