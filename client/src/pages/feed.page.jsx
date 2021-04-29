@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Loader from "../components/loader.component";
 import Item from "../components/item.component";
 import img from "../assets/PNG/Transparent/19 Coming soon.png";
 // import AnimatedBackground from "../components/animatedBackground.component";
+import AuthContext from "../context/auth.context";
 // import { types, images } from "../assets/data";
 import axios from "axios";
 const Items = ({ feed }) => {
@@ -20,10 +21,15 @@ const Items = ({ feed }) => {
     );
 };
 const Feed = () => {
+    const context = useContext(AuthContext);
     const [data, setdata] = useState(null);
     useEffect(() => {
         axios
-            .get("/api/post")
+            .get(`/api/post/`, {
+                headers: {
+                    Authorization: `Bearer ${context.token}`,
+                },
+            })
             .then(({ data }) => setdata(data))
             .catch((err) => console.log(err));
     }, []);
