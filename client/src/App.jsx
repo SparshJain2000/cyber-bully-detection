@@ -3,6 +3,7 @@ import Home from "./pages/home.page";
 import Post from "./pages/post.page";
 import Feed from "./pages/feed.page";
 import Auth from "./pages/auth.page";
+import Profile from "./pages/profile.page";
 import Navbar from "./components/navbar.component";
 import AuthContext from "./context/auth.context";
 import { Component } from "react";
@@ -94,7 +95,11 @@ class App extends Component {
                                     exact
                                     component={Feed}
                                 />
-
+                                <Route
+                                    path='/user/:id'
+                                    exact
+                                    component={Profile}
+                                />
                                 <Route
                                     path='/auth/login'
                                     exact

@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardTitle, CardText, Input, Label, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -119,10 +120,12 @@ const Item = ({ post }) => {
                                 {" "}
                                 | Liked By{" "}
                                 {item.likes.slice(0, 2).map((like, i) => (
-                                    <a href='/feed'>
+                                    <Link
+                                        to={`/user/${like.id}`}
+                                        target='_blank'>
                                         {like.username}
                                         {i == item.likes.length - 1 ? "" : ", "}
-                                    </a>
+                                    </Link>
                                 ))}
                             </span>
                         )}
