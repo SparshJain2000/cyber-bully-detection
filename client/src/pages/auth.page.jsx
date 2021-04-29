@@ -78,50 +78,37 @@ const Auth = () => {
 
     const submit = async (e) => {
         e.preventDefault();
-        try {
-            const { email, password } = credentials;
-            let creds = {
-                email,
-                password,
-            };
-            if (!isLogin)
-                creds.name = `${credentials.firstName} ${credentials.lastName}`;
-            console.log(creds);
-            axios
-                .post(`/api/auth/${isLogin ? `login` : `signup`}`, creds)
-                .then(({ data }) => {
-                    console.log(data);
-                    const { token, tokenExpiration, user } = data;
-                    context.login(token, tokenExpiration, user);
 
-                    history.push("/");
-                })
-                .catch(({ response }) => {
-                    setErrorModal(true);
-                    setErrorMsg(
-                        response?.data?.err === "INVALID_PASSWORD"
-                            ? "Please enter correct password"
-                            : response?.data?.err === "INVALID_EMAIL"
-                            ? "User not registered"
-                            : response?.data?.err === "EMAIL_EXISTS"
-                            ? "User already registered"
-                            : "Something went wrong. Please try again later",
-                    );
-                    console.log(response?.data?.err);
-                });
-        } catch (e) {
-            console.log(e.message);
-            setErrorModal(true);
-            setErrorMsg(
-                e.message === "EMAIL_EXISTS"
-                    ? "Email already registered"
-                    : e.message === "INVALID_EMAIL"
-                    ? "User not registered"
-                    : e.message === "INVALID_PASSWORD"
-                    ? "Please enter correct password"
-                    : "Something went wrong. Please try again later",
-            );
-        }
+        const { email, password } = credentials;
+        let creds = {
+            email,
+            password,
+        };
+        if (!isLogin)
+            creds.name = `${credentials.firstName} ${credentials.lastName}`;
+        console.log(creds);
+        axios
+            .post(`/api/auth/${isLogin ? `login` : `signup`}`, creds)
+            .then(({ data }) => {
+                console.log(data);
+                const { token, tokenExpiration, user } = data;
+                context.login(token, tokenExpiration, user);
+
+                history.push("/");
+            })
+            .catch(({ response }) => {
+                setErrorModal(true);
+                setErrorMsg(
+                    response?.data?.error === "INVALID_PASSWORD"
+                        ? "Please enter correct password"
+                        : response?.data?.error === "INVALID_EMAIL"
+                        ? "User not registered"
+                        : response?.data?.error === "EMAIL_EXISTS"
+                        ? "User already registered"
+                        : "Something went wrong. Please try again later",
+                );
+                console.log(response?.data?.err);
+            });
     };
     return (
         <div className='auth d-flex flex-row '>
