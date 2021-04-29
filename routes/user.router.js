@@ -3,12 +3,21 @@ const router = require("express").Router(),
     User = require("../models/user.model");
 
 router.get("/", async (req, res) => {
-    const users = await User.find({}, { password: 0 }).lean();
-    return res.json({ users: users });
+    try {
+        const users = await User.find({}, { password: 0 }).lean();
+        return res.json({ users: users });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 router.get("/:id", async (req, res) => {
-    const user = await User.findById(req.params.id, { password: 0 }).lean();
-    return res.json({ user: user });
+    try {
+        const user = await User.findById(req.params.id, { password: 0 }).lean();
+        if (!user) throw new Error("USER_NOT_FOUND");
+        return res.json({ user: user });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 router.post("/follow", verifyToken, async (req, res) => {
     try {

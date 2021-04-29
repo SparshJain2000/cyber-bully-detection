@@ -4,21 +4,25 @@ const router = require("express").Router(),
     User = require("../models/user.model");
 
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(500).json({ err: "INVALID_EMAIL" });
-    const isEqual = await bcrypt.compare(password, user.password);
-    if (!isEqual) return res.status(500).json({ err: "INVALID_PASSWORD" });
-    const token = await jwt.sign(
-        { userId: user.id, email: user.email, username: user.name },
-        process.env.SECRET,
-        { expiresIn: "1h" },
-    );
-    return res.json({
-        user: { id: user.id, email: user.email, username: user.name },
-        token,
-        tokenExpiration: 1,
-    });
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) throw new Error("INVALID_EMAIL");
+        const isEqual = await bcrypt.compare(password, user.password);
+        if (!isEqual) throw new Error("INVALID_PASSWORD");
+        const token = await jwt.sign(
+            { userId: user.id, email: user.email, username: user.name },
+            process.env.SECRET,
+            { expiresIn: "1h" },
+        );
+        return res.json({
+            user: { id: user.id, email: user.email, username: user.name },
+            token,
+            tokenExpiration: 1,
+        });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 router.post("/signup", async (req, res) => {
@@ -26,7 +30,7 @@ router.post("/signup", async (req, res) => {
         const user = await User.findOne({
             email: req.body.email,
         });
-        if (user) res.status(500).json({ err: "EMAIL_EXISTS" });
+        if (user) throw new Error("EMAIL_EXISTS");
         const hashed = await bcrypt.hash(req.body.password, 12);
         const newUser = new User({
             ...req.body,
@@ -47,9 +51,8 @@ router.post("/signup", async (req, res) => {
             token,
             tokenExpiration: 1,
         });
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({ err });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
     }
 });
 module.exports = router;
