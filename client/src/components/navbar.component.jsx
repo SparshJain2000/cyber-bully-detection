@@ -86,7 +86,9 @@ const NavbarComponent = () => {
                         </NavItem>
                         {context.token ? (
                             <NavItem className='m-1 my-2 my-lg-1'>
-                                <NavLink to='/feed' className='active'>
+                                <NavLink
+                                    to={`/user/${context.user.id}`}
+                                    className='active'>
                                     <FontAwesomeIcon
                                         size='lg'
                                         icon={faUserCircle}
