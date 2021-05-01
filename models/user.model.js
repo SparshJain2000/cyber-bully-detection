@@ -26,6 +26,15 @@ const UserSchema = new Schema(
                 username: String,
             },
         ],
+        posts: [
+            {
+                id: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Post",
+                },
+                image: String,
+            },
+        ],
         name: { type: String, required: true },
         password: {
             type: String,
