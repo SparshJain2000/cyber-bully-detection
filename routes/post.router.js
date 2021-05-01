@@ -121,8 +121,13 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
                 username: req.user.username,
             },
         });
-        console.log(post);
+        let user = await User.findById(req.user.id);
+        user.posts.push({ id: post._id, image: post.image });
+
+        // console.log(post.image, user.posts);
+
         await post.save();
+        await user.save();
         res.json({ status: "posted", post: post, image: req.file.path });
     } catch (e) {
         res.status(500).json({ error: e.message });
