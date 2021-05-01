@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { Card, CardTitle, CardText, Input, Label, Button } from "reactstrap";
 import AuthContext from "../context/auth.context";
-import img from "../assets/PNG/Transparent/7 Social Media.png";
+import img from "../assets/PNG/Transparent/user.png";
 // import AnimatedBackground from "../components/animatedBackground.component";
 // import { types, images } from "../assets/data";
 import axios from "axios";
@@ -11,6 +11,7 @@ const Profile = () => {
     const context = useContext(AuthContext);
     const { id } = useParams();
     const [user, setuser] = useState(null);
+    const [following, setfollowing] = useState(false);
     useEffect(() => {
         console.log(id);
         axios
@@ -18,10 +19,16 @@ const Profile = () => {
             .then(({ data }) => {
                 console.log(data);
                 setuser(data.user);
+                setfollowing(
+                    data.user.followers
+                        .map((x) => x.id)
+                        .includes(context.user.id),
+                );
             })
             .catch((err) => console.log(err));
     }, []);
     const follow = () => {
+        if (id === context.user.id) return;
         axios
             .post(
                 "/api/user/follow",
@@ -32,7 +39,20 @@ const Profile = () => {
                     },
                 },
             )
-            .then((x) => console.log(x))
+            .then((x) => {
+                console.log(x);
+                setfollowing(true);
+                setuser({
+                    ...user,
+                    followers: [
+                        ...user.followers,
+                        {
+                            id: context.user.id,
+                            username: context.user.username,
+                        },
+                    ],
+                });
+            })
             .catch((e) => {
                 console.log(e?.response);
                 console.log(e);
@@ -42,30 +62,74 @@ const Profile = () => {
     return (
         <>
             {user && (
-                <Card className='row flex-row w-100 m-1 profile'>
-                    <div className='col-12 col-md-4 p-2 my-auto'>
-                        <img src={user.image} alt='photu' />
-                    </div>
-                    <div className='col-12 col-md-8 p-3 content'>
-                        <CardTitle tag='h5' className='row'>
-                            <span className='col-4 pl-0'>{user.name}</span>
-                            <span className='col-4'>
-                                Following : {user.following.length}
-                            </span>
-                            <span className='col-4 pr-0'>
-                                Followers : {user.followers.length}
-                            </span>
-                        </CardTitle>
-                        <CardTitle tag='h5'></CardTitle>
-                        <CardTitle tag='h5'></CardTitle>
+                <>
+                    <div className='row flex-row w-100 profile mx-0 mt-4'>
+                        <div className='col-12 col-md-4 p-2 mb-auto text-align-center'>
+                            <img
+                                src={user.image ? user.image : img}
+                                className='img-fluid profile-img'
+                                alt='photu'
+                            />
+                            <div className='p-2 w-100 mt-2'>
+                                <Button
+                                    onClick={follow}
+                                    className='follow-button'
+                                    disabled={!context.token || following}>
+                                    {context?.user?.id === id
+                                        ? "Edit Profile"
+                                        : following
+                                        ? "Following 🤙"
+                                        : "Follow"}
+                                </Button>
+                            </div>
+                        </div>
+                        <div className='col-12 col-md-8 p-3 content'>
+                            <CardTitle tag='h3' className='text-align-center'>
+                                {user.name}
+                            </CardTitle>
+                            <CardTitle
+                                tag='h5'
+                                className='row justify-content-around'>
+                                <span className=' pl-0 center-md my-1 '>
+                                    {user.posts.length} posts
+                                </span>
+                                <span className=' center-md my-1 '>
+                                    {user.following.length} following
+                                </span>
+                                <span className=' center-md my-1  pr-0'>
+                                    {user.followers.length} followers
+                                </span>
+                            </CardTitle>
 
-                        <CardText>
-                            <Button onClick={follow} disabled={!context.token}>
-                                Follow
-                            </Button>
-                        </CardText>
+                            <CardText>
+                                <p className='text-align-justify'>{user.bio}</p>
+                            </CardText>
+                        </div>
                     </div>
-                </Card>
+
+                    <div className='flex-grow-1 pt-3  position-relative user-posts'>
+                        <h4 className='text-align-center'>Posts</h4>
+                        <hr />
+                        <div className='col-12 col-md-10 col-lg-9 mx-auto px-2 px-md-0 row justify-content-around'>
+                            {user.posts.map((post) => (
+                                <div className='col-12 col-md-4 p-2 border my-1 d-flex flex-column '>
+                                    <div className='flex-grow-1 vertical-center'>
+                                        <img
+                                            src={`/${post.image}`}
+                                            className='img-fluid '
+                                            alt=''
+                                        />
+                                    </div>
+                                    <Button
+                                        className='w-100 my-1'
+                                        color='primary'>
+                                        View Post
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </>
             )}
         </>
     );
