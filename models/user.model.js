@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 const UserSchema = new Schema(
     {
         bio: { type: String },
+        image: { type: String },
         email: {
             type: String,
             required: true,
