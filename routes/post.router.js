@@ -71,7 +71,8 @@ router.get("/", async (req, res) => {
 });
 
 //Route for sending the posts of only following accounts
-router.get("/:id", verifyToken, async (req, res) => {
+/*
+router.get("/", verifyToken, async (req, res) => {
     try {
         let user = await User.findById(req.user.id).lean();
         const foll = user.following.map((x) => x.id);
@@ -104,6 +105,42 @@ router.get("/:id", verifyToken, async (req, res) => {
     } catch (e) {
         console.log(e);
         res.status(500).json({ error: "NOT_AUTHORIZED" });
+    }
+});
+*/
+router.get("/:id", async (req, res) => {
+    try {
+        console.log(req.params.id);
+        let post = await Post.findById(req.params.id)
+            .populate({
+                path: "comments",
+                populate: {
+                    path: "id",
+                    model: "Comment",
+                },
+            })
+            .lean();
+        if (!post) throw new Error("INVALID_POST");
+        // console.log(post);
+        res.json({
+            post: {
+                ...post,
+                comments: post.comments
+                    ? post.comments.map((comment) => {
+                          const id = comment.id;
+                          return {
+                              ...comment,
+                              id: id.id,
+                              author: id.author,
+                              createdAt: id.createdAt,
+                          };
+                      })
+                    : [],
+            },
+        });
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ error: e.message });
     }
 });
 
