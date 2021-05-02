@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { Card, CardTitle, CardText, Input, Label, Button } from "reactstrap";
 import AuthContext from "../context/auth.context";
 import img from "../assets/PNG/Transparent/user.png";
@@ -8,6 +8,7 @@ import img from "../assets/PNG/Transparent/user.png";
 // import { types, images } from "../assets/data";
 import axios from "axios";
 const Profile = () => {
+    const history = useHistory();
     const context = useContext(AuthContext);
     const { id } = useParams();
     const [user, setuser] = useState(null);
@@ -24,11 +25,13 @@ const Profile = () => {
                         .map((x) => x.id)
                         .includes(context.user.id),
                 );
+                console.log(data.user.followers.map((x) => x.id));
+                console.log(context.user.id);
             })
             .catch((err) => console.log(err));
     }, []);
     const follow = () => {
-        if (id === context.user.id) return;
+        if (following) alert("ALREADY_FOLLOWING");
         axios
             .post(
                 "/api/user/follow",
@@ -66,21 +69,34 @@ const Profile = () => {
                     <div className='row flex-row w-100 profile mx-0 mt-4'>
                         <div className='col-12 col-md-4 p-2 mb-auto text-align-center'>
                             <img
-                                src={user.image ? user.image : img}
+                                src={user.image ? `/${user.image}` : img}
                                 className='img-fluid profile-img'
                                 alt='photu'
                             />
                             <div className='p-2 w-100 mt-2'>
-                                <Button
-                                    onClick={follow}
-                                    className='follow-button'
-                                    disabled={!context.token || following}>
-                                    {context?.user?.id === id
-                                        ? "Edit Profile"
-                                        : following
-                                        ? "Following 🤙"
-                                        : "Follow"}
-                                </Button>
+                                {context?.user?.id === id ? (
+                                    <Link
+                                        to='/user/edit'
+                                        className='follow-button btn btn-secondary'
+                                        disabled={
+                                            context.token
+                                                ? following
+                                                : !context.token
+                                        }>
+                                        Edit Profile
+                                    </Link>
+                                ) : (
+                                    context.token && (
+                                        <Button
+                                            onClick={follow}
+                                            className='follow-button'
+                                            disabled={following}>
+                                            {following
+                                                ? "Following 🤙"
+                                                : "Follow"}
+                                        </Button>
+                                    )
+                                )}
                             </div>
                         </div>
                         <div className='col-12 col-md-8 p-3 content'>
@@ -120,11 +136,11 @@ const Profile = () => {
                                             alt=''
                                         />
                                     </div>
-                                    <Button
-                                        className='w-100 my-1'
-                                        color='primary'>
+                                    <Link
+                                        className='w-100 my-1 btn btn-primary'
+                                        to={`/post/${post.id}`}>
                                         View Post
-                                    </Button>
+                                    </Link>
                                 </div>
                             ))}
                         </div>
