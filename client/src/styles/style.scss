@@ -47,8 +47,16 @@ main {
 .text-white {
     color: $white !important;
 }
+a {
+    // &:hover {
+    //     color: $secondary !important;
+    //     text-decoration: underline;
+    //     cursor: pointer;
+    // }
+}
 .link {
     cursor: pointer;
+    color: $primary;
     &:hover {
         color: $secondary !important;
         text-decoration: underline;
@@ -107,4 +115,7 @@ a {
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+.photu {
+    max-width: 500px !important;
 }

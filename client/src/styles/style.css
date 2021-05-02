@@ -164,6 +164,12 @@
 
 .image-hidden {
   opacity: 0;
+  display: none;
+}
+
+.likes .list-group-item {
+  padding: 0.5rem 1rem;
+  padding-left: 0;
 }
 
 .worker-card {
@@ -1133,6 +1139,7 @@ main {
 
 .link {
   cursor: pointer;
+  color: #4b369d;
 }
 
 .link:hover {
@@ -1217,5 +1224,9 @@ a:hover {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+}
+
+.photu {
+  max-width: 500px !important;
 }
 /*# sourceMappingURL=style.css.map */
