@@ -95,7 +95,7 @@ const EditProfile = () => {
                     <div className='row flex-row w-100 profile mx-0 mt-4'>
                         <div className='col-12 col-md-4 p-2 mb-auto text-align-center'>
                             <img
-                                src={image ? image : img}
+                                src={image ? `/${image}` : img}
                                 className='img-fluid profile-img'
                                 alt='photu'
                             />
