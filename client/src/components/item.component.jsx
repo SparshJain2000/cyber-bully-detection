@@ -14,6 +14,7 @@ import axios from "axios";
 import Loader from "./loader.component";
 const Item = ({ post }) => {
     const context = useContext(AuthContext);
+    const [loading, setloading] = useState(false);
     const [item, setitem] = useState(post);
     const [imgLoaded, setimgloaded] = useState(false);
     useEffect(() => {
@@ -44,6 +45,8 @@ const Item = ({ post }) => {
             comment,
             id: item._id,
         };
+        setloading(true);
+
         axios
             .post("/api/post/comment", query, {
                 headers: {
@@ -59,8 +62,13 @@ const Item = ({ post }) => {
                 });
                 setaddComment(false);
                 setReviewToggle(true);
+                setloading(false);
             })
-            .catch((err) => console.log(err, err.response));
+            .catch((err) => {
+                console.log(err, err.response);
+                setloading(false);
+                alert(err?.response?.data?.error);
+            });
     };
     const like = () => {
         if (!context.token) {
@@ -85,130 +93,145 @@ const Item = ({ post }) => {
             .catch((err) => console.log(err, err.response));
     };
     return (
-        <Card className='row flex-row w-100 m-1 '>
-            <div className='col-12 col-md-4 p-2 my-auto'>
-                <img
-                    src={item.image}
-                    className={`img-fluid smooth-image image-${
-                        imgLoaded ? "visible" : "hidden"
-                    }`}
-                    alt='photu'
-                    onLoad={() => setimgloaded(true)}
-                />
+        <>
+            {loading && (
+                <div className='loader'>
+                    <Loader />
+                </div>
+            )}
+            <Card className='row flex-row w-100 m-1 '>
+                <div className='col-12 col-md-4 p-2 my-auto'>
+                    <img
+                        src={item.image}
+                        className={`img-fluid smooth-image image-${
+                            imgLoaded ? "visible" : "hidden"
+                        }`}
+                        alt='photu'
+                        onLoad={() => setimgloaded(true)}
+                    />
 
-                {!imgLoaded && (
-                    <div className='my-auto'>
-                        <Loader />
-                    </div>
-                )}
-            </div>
-            <div className='col-12 col-md-8 p-3 content'>
-                <CardTitle tag='h5'>{item.title}</CardTitle>
-                <CardText>
-                    <span>
-                        <FontAwesomeIcon
-                            icon={faThumbsUp}
-                            title={`${
-                                liked ? "Already liked" : "Like the post"
-                            }`}
-                            className={`like ${liked && "liked unauth"}`}
-                            onClick={like}
-                        />
-                        {item.likes.length} Likes
-                        {item.likes.length > 0 && (
-                            <span>
-                                {" "}
-                                | Liked By{" "}
-                                {item.likes.slice(0, 2).map((like, i) => (
-                                    <Link
-                                        to={`/user/${like.id}`}
-                                        target='_blank'>
-                                        {like.username}
-                                        {i == item.likes.length - 1 ? "" : ", "}
-                                    </Link>
-                                ))}
-                            </span>
-                        )}
-                    </span>
-                    <br />
-                    <strong>{item.author.username} : </strong>
-                    {item.text.slice(0, 100)} ...
-                </CardText>
-                <CardText>
-                    <div className='d-flex flex-row justify-content-between'>
-                        {item.comments.length !== 0 && (
-                            <span
-                                style={{ cursor: "pointer" }}
-                                className='text-primary'
-                                onClick={() => setReviewToggle(!reviewToggle)}>
-                                View {item.comments.length} Comments{" "}
-                                <span>
-                                    <FontAwesomeIcon
-                                        icon={
-                                            !reviewToggle
-                                                ? faAngleDown
-                                                : faAngleUp
-                                        }
-                                    />
-                                </span>
-                            </span>
-                        )}
-                        <span
-                            className={`link ${context.token ? "" : "unauth"}`}
-                            onClick={() => setaddComment(!addComment)}>
-                            <FontAwesomeIcon
-                                className='mr-1'
-                                icon={faPlusSquare}
-                            />
-                            Comment
-                        </span>
-                    </div>
-                    <div>
-                        {reviewToggle &&
-                            item.comments.map((comment, ind) => (
-                                <div className='review'>
-                                    <strong>
-                                        {comment?.author?.username} :{" "}
-                                    </strong>
-                                    {comment.text}
-                                </div>
-                            ))}
-                    </div>
-                    {addComment && (
-                        <div className='d-flex flex-row new-comment'>
-                            <Label className='d-flex flex-column justify-content-center m-0'>
-                                <strong>{context?.user?.username} : </strong>
-                            </Label>
-                            <div className='flex-grow-1 ml-1 d-flex flex-row justify-content-between'>
-                                <Input
-                                    type='textarea'
-                                    name='comment'
-                                    id='comment'
-                                    placeholder='add a comment ...'
-                                    onChange={handleChange}
-                                    className='flex-grow-1 mr-1'
-                                    value={comment}
-                                    rows={1}
-                                />
-                                <Button
-                                    size='sm'
-                                    color='primary'
-                                    disabled={comment.length === 0}
-                                    onClick={postComment}>
-                                    Post
-                                </Button>
-                            </div>
+                    {!imgLoaded && (
+                        <div className='my-auto'>
+                            <Loader />
                         </div>
                     )}
-                    <small className='text-muted'>
-                        Posted{" "}
-                        {days === 0
-                            ? "today"
-                            : `${days} day${days === 1 ? "" : "s"} ago`}
-                    </small>
-                </CardText>
-            </div>
-        </Card>
+                </div>
+                <div className='col-12 col-md-8 p-3 content'>
+                    <CardTitle tag='h5'>{item.title}</CardTitle>
+                    <CardText>
+                        <span>
+                            <FontAwesomeIcon
+                                icon={faThumbsUp}
+                                title={`${
+                                    liked ? "Already liked" : "Like the post"
+                                }`}
+                                className={`like ${liked && "liked unauth"}`}
+                                onClick={like}
+                            />
+                            {item.likes.length} Likes
+                            {item.likes.length > 0 && (
+                                <span>
+                                    {" "}
+                                    | Liked By{" "}
+                                    {item.likes.slice(0, 2).map((like, i) => (
+                                        <Link
+                                            to={`/user/${like.id}`}
+                                            target='_blank'>
+                                            {like.username}
+                                            {i == item.likes.length - 1
+                                                ? ""
+                                                : ", "}
+                                        </Link>
+                                    ))}
+                                </span>
+                            )}
+                        </span>
+                        <br />
+                        <strong>{item.author.username} : </strong>
+                        {item.text.slice(0, 100)} ...
+                    </CardText>
+                    <CardText>
+                        <div className='d-flex flex-row justify-content-between'>
+                            {item.comments.length !== 0 && (
+                                <span
+                                    style={{ cursor: "pointer" }}
+                                    className='text-primary'
+                                    onClick={() =>
+                                        setReviewToggle(!reviewToggle)
+                                    }>
+                                    View {item.comments.length} Comments{" "}
+                                    <span>
+                                        <FontAwesomeIcon
+                                            icon={
+                                                !reviewToggle
+                                                    ? faAngleDown
+                                                    : faAngleUp
+                                            }
+                                        />
+                                    </span>
+                                </span>
+                            )}
+                            <span
+                                className={`link ${
+                                    context.token ? "" : "unauth"
+                                }`}
+                                onClick={() => setaddComment(!addComment)}>
+                                <FontAwesomeIcon
+                                    className='mr-1'
+                                    icon={faPlusSquare}
+                                />
+                                Comment
+                            </span>
+                        </div>
+                        <div>
+                            {reviewToggle &&
+                                item.comments.map((comment, ind) => (
+                                    <div className='review'>
+                                        <strong>
+                                            {comment?.author?.username} :{" "}
+                                        </strong>
+                                        {comment.text}
+                                    </div>
+                                ))}
+                        </div>
+                        {addComment && (
+                            <div className='d-flex flex-row new-comment'>
+                                <Label className='d-flex flex-column justify-content-center m-0'>
+                                    <strong>
+                                        {context?.user?.username} :{" "}
+                                    </strong>
+                                </Label>
+                                <div className='flex-grow-1 ml-1 d-flex flex-row justify-content-between'>
+                                    <Input
+                                        type='textarea'
+                                        name='comment'
+                                        id='comment'
+                                        placeholder='add a comment ...'
+                                        onChange={handleChange}
+                                        className='flex-grow-1 mr-1'
+                                        value={comment}
+                                        rows={1}
+                                    />
+                                    <Button
+                                        size='sm'
+                                        color='primary'
+                                        disabled={comment.length === 0}
+                                        onClick={postComment}>
+                                        Post
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                        <small className='text-muted'>
+                            Posted{" "}
+                            {days === 0
+                                ? "today"
+                                : `${days} day${days === 1 ? "" : "s"} ago`}
+                        </small>
+                    </CardText>
+                </div>
+            </Card>
+        </>
     );
 };
 export default Item;
