@@ -6,10 +6,13 @@ import img from "../assets/PNG/Transparent/7 Social Media.png";
 const Home = () => {
     return (
         <>
-            <div
-                style={{ paddingTop: "5vh" }}
-                className='flex-grow-1 bg-lightbg '>
-                <div className='row mx-0 ' style={{ minHeight: "40vh" }}>
+            <div style={{ padding: "3vh" }} className='flex-grow-1 bg-lightbg '>
+                <div
+                    className='row mx-0'
+                    style={{ minHeight: "40vh", flexDirection: "row-reverse" }}>
+                    <div className='col-12 col-md-6 col-lg-5 d-flex justify-content-center'>
+                        <img src={img} className='img-fluid' alt='photu' />
+                    </div>
                     <div className='col-12 col-md-6 col-lg-7 my-auto d-flex flex-row justify-content-center'>
                         <div className='text-align-start banner'>
                             <h1 className='text-gray'>XYZ_MEDIA </h1>
@@ -30,9 +33,6 @@ const Home = () => {
                                 </Link>
                             </div>
                         </div>
-                    </div>
-                    <div className='col-12 col-md-6 col-lg-5 d-none d-md-flex justify-content-center'>
-                        <img src={img} className='img-fluid' alt='photu' />
                     </div>
                 </div>
             </div>

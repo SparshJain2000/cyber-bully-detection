@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 const UserSchema = new Schema(
     {
         bio: { type: String },
+        image: { type: String },
         email: {
             type: String,
             required: true,
@@ -24,6 +25,15 @@ const UserSchema = new Schema(
                     ref: "User",
                 },
                 username: String,
+            },
+        ],
+        posts: [
+            {
+                id: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Post",
+                },
+                image: String,
             },
         ],
         name: { type: String, required: true },

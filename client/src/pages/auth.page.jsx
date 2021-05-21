@@ -94,7 +94,7 @@ const Auth = () => {
                 const { token, tokenExpiration, user } = data;
                 context.login(token, tokenExpiration, user);
 
-                history.push("/");
+                history.push("/feed");
             })
             .catch(({ response }) => {
                 setErrorModal(true);

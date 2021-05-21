@@ -1,9 +1,11 @@
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Home from "./pages/home.page";
-import Post from "./pages/post.page";
+import PostPage from "./pages/post.page";
+import Post from "./components/post.component";
 import Feed from "./pages/feed.page";
 import Auth from "./pages/auth.page";
 import Profile from "./pages/profile.page";
+import EditProfile from "./pages/editProfile.page";
 import Navbar from "./components/navbar.component";
 import AuthContext from "./context/auth.context";
 import { Component } from "react";
@@ -87,13 +89,24 @@ class App extends Component {
                                     path='/post'
                                     loggedIn={this.state.token}
                                     exact
-                                    component={Post}
+                                    component={PostPage}
                                 />
                                 <ProtectedRoute
                                     loggedIn={this.state.token}
                                     path='/feed'
                                     exact
                                     component={Feed}
+                                />
+                                <ProtectedRoute
+                                    loggedIn={this.state.token}
+                                    path='/user/edit'
+                                    exact
+                                    component={EditProfile}
+                                />
+                                <Route
+                                    path='/post/:id'
+                                    exact
+                                    component={Post}
                                 />
                                 <Route
                                     path='/user/:id'

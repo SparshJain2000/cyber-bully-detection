@@ -94,3 +94,16 @@
     margin-top: 10vh !important;
     margin-bottom: 10vh !important;
 }
+.loader {
+    z-index: 100;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.6);
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    width: 100% !important;
+    height: 100% !important;
+}

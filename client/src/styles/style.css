@@ -164,6 +164,12 @@
 
 .image-hidden {
   opacity: 0;
+  display: none;
+}
+
+.likes .list-group-item {
+  padding: 0.5rem 1rem;
+  padding-left: 0;
 }
 
 .worker-card {
@@ -440,6 +446,28 @@
 .my-10vh {
   margin-top: 10vh !important;
   margin-bottom: 10vh !important;
+}
+
+.loader {
+  z-index: 100;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  position: fixed;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 * {
@@ -1012,6 +1040,75 @@ footer .icons .social:hover {
   }
 }
 
+.profile {
+  -webkit-transition: 0.4s ease-in-out;
+  transition: 0.4s ease-in-out;
+}
+
+.profile .content {
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.profile .profile-img {
+  max-width: 200px;
+}
+
+.profile .follow-button {
+  max-width: 200px;
+  width: 100%;
+}
+
+.profile .like {
+  margin-right: 0.4rem;
+  cursor: pointer;
+}
+
+.profile .liked {
+  color: #f9bf16;
+  margin-right: 0.4rem;
+  cursor: pointer;
+}
+
+.profile:hover {
+  -webkit-transition: 0.4s ease-in-out;
+  transition: 0.4s ease-in-out;
+}
+
+.profile img {
+  border-radius: 0.4rem;
+  -webkit-box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.7);
+          box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.7);
+  -webkit-transition: 2s ease-in-out;
+  transition: 2s ease-in-out;
+}
+
+.profile .center-md {
+  text-align: start;
+}
+
+@media only screen and (max-width: 767px) {
+  .profile .center-md {
+    text-align: center;
+  }
+}
+
+.user-posts img {
+  border-radius: 0.4rem;
+  -webkit-box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.7);
+          box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.7);
+  -webkit-transition: 2s ease-in-out;
+  transition: 2s ease-in-out;
+}
+
+.user-posts .border {
+  border: 1px solid #aeaeae;
+  border-radius: 0.4rem;
+}
+
 #root {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1064,6 +1161,7 @@ main {
 
 .link {
   cursor: pointer;
+  color: #4b369d;
 }
 
 .link:hover {
@@ -1135,5 +1233,22 @@ a:hover {
 
 .unauth {
   pointer-events: none;
+}
+
+.vertical-center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.photu {
+  max-width: 500px !important;
 }
 /*# sourceMappingURL=style.css.map */

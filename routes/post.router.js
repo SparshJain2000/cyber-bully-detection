@@ -3,10 +3,9 @@ const Post = require("../models/post.model");
 const Comment = require("../models/comment.model");
 const User = require("../models/user.model");
 const mongoose = require("mongoose");
-
+const { checkText } = require("../helper/bully");
 const { populateComment } = require("../helper/index");
 const verifyToken = require("../middleware/auth");
-// var Image = require("../models/image");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -71,7 +70,8 @@ router.get("/", async (req, res) => {
 });
 
 //Route for sending the posts of only following accounts
-router.get("/:id", verifyToken, async (req, res) => {
+/*
+router.get("/", verifyToken, async (req, res) => {
     try {
         let user = await User.findById(req.user.id).lean();
         const foll = user.following.map((x) => x.id);
@@ -106,10 +106,47 @@ router.get("/:id", verifyToken, async (req, res) => {
         res.status(500).json({ error: "NOT_AUTHORIZED" });
     }
 });
+*/
+router.get("/:id", async (req, res) => {
+    try {
+        let post = await Post.findById(req.params.id)
+            .populate({
+                path: "comments",
+                populate: {
+                    path: "id",
+                    model: "Comment",
+                },
+            })
+            .lean();
+        if (!post) throw new Error("INVALID_POST");
+        // console.log(post);
+        res.json({
+            post: {
+                ...post,
+                comments: post.comments
+                    ? post.comments.map((comment) => {
+                          const id = comment.id;
+                          return {
+                              ...comment,
+                              id: id.id,
+                              author: id.author,
+                              createdAt: id.createdAt,
+                          };
+                      })
+                    : [],
+            },
+        });
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ error: e.message });
+    }
+});
 
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     try {
         if (!req.isAuth) throw new Error("NOT_AUTHORIZED");
+        const score = await checkText(req.body.text);
+        if (score > 0.5) throw new Error("VULGAR_CONTENT");
         console.log(req.file.path);
         const post = new Post({
             text: req.body.text,
@@ -121,8 +158,10 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
                 username: req.user.username,
             },
         });
-        console.log(post);
+        let user = await User.findById(req.user.id);
+        user.posts.push({ id: post._id, image: post.image });
         await post.save();
+        await user.save();
         res.json({ status: "posted", post: post, image: req.file.path });
     } catch (e) {
         res.status(500).json({ error: e.message });
@@ -131,6 +170,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
 router.post("/comment", verifyToken, async (req, res) => {
     try {
         if (!req.isAuth) throw new Error("NOT_AUTHORIZED");
+        const score = await checkText(req.body.comment);
+        if (score > 0.5) throw new Error("VULGAR_COMMENT");
         post = await Post.findById(req.body.id);
         const comment = new Comment({
             text: req.body.comment,
@@ -148,7 +189,9 @@ router.post("/comment", verifyToken, async (req, res) => {
 
         return res.json({ status: "added", post: post, comment: comment });
     } catch (err) {
-        res.status(500).json({ error: e.message });
+        res.status(500).json({
+            error: err.message ? err.message : "Try again",
+        });
     }
 });
 router.post("/like", verifyToken, async (req, res) => {

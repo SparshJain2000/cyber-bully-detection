@@ -116,4 +116,11 @@
 }
 .image-hidden {
     opacity: 0;
+    display: none;
+}
+.likes {
+    .list-group-item {
+        padding: 0.5rem 1rem;
+        padding-left: 0;
+    }
 }
