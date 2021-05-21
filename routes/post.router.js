@@ -3,10 +3,9 @@ const Post = require("../models/post.model");
 const Comment = require("../models/comment.model");
 const User = require("../models/user.model");
 const mongoose = require("mongoose");
-
+const { checkText } = require("../helper/bully");
 const { populateComment } = require("../helper/index");
 const verifyToken = require("../middleware/auth");
-// var Image = require("../models/image");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -110,7 +109,6 @@ router.get("/", verifyToken, async (req, res) => {
 */
 router.get("/:id", async (req, res) => {
     try {
-        console.log(req.params.id);
         let post = await Post.findById(req.params.id)
             .populate({
                 path: "comments",
@@ -147,6 +145,8 @@ router.get("/:id", async (req, res) => {
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     try {
         if (!req.isAuth) throw new Error("NOT_AUTHORIZED");
+        const score = await checkText(req.body.text);
+        if (score > 0.5) throw new Error("VULGAR_CONTENT");
         console.log(req.file.path);
         const post = new Post({
             text: req.body.text,
@@ -160,9 +160,6 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
         });
         let user = await User.findById(req.user.id);
         user.posts.push({ id: post._id, image: post.image });
-
-        // console.log(post.image, user.posts);
-
         await post.save();
         await user.save();
         res.json({ status: "posted", post: post, image: req.file.path });
@@ -173,6 +170,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
 router.post("/comment", verifyToken, async (req, res) => {
     try {
         if (!req.isAuth) throw new Error("NOT_AUTHORIZED");
+        const score = await checkText(req.body.comment);
+        if (score > 0.5) throw new Error("VULGAR_COMMENT");
         post = await Post.findById(req.body.id);
         const comment = new Comment({
             text: req.body.comment,
@@ -190,7 +189,9 @@ router.post("/comment", verifyToken, async (req, res) => {
 
         return res.json({ status: "added", post: post, comment: comment });
     } catch (err) {
-        res.status(500).json({ error: e.message });
+        res.status(500).json({
+            error: err.message ? err.message : "Try again",
+        });
     }
 });
 router.post("/like", verifyToken, async (req, res) => {
