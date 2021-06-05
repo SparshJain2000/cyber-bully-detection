@@ -3,7 +3,7 @@ const Post = require("../models/post.model");
 const Comment = require("../models/comment.model");
 const User = require("../models/user.model");
 const mongoose = require("mongoose");
-const { checkText } = require("../helper/bully");
+const { checkText, checkImage } = require("../helper/bully");
 const { populateComment } = require("../helper/index");
 const verifyToken = require("../middleware/auth");
 const multer = require("multer");
@@ -16,15 +16,16 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + "_" + file.originalname);
     },
 });
-const fileFilter = (req, file, cb) => {
-    console.log(req.isAuth);
+const fileFilter = async (req, file, cb) => {
+    const bool = await checkImage(file);
+    if (!bool) req.error = "CYBER BULLY";
     if (
         req.isAuth &&
         (file.mimetype === "image/jpeg" || file.mimetype === "image/png")
     ) {
         cb(null, true);
     } else {
-        // rejects storing a file
+        req.error = "INVALID TYPE";
         cb(null, false);
     }
 };
@@ -145,8 +146,9 @@ router.get("/:id", async (req, res) => {
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     try {
         if (!req.isAuth) throw new Error("NOT_AUTHORIZED");
+        if (req.error) throw new Error(req.error);
         const score = await checkText(req.body.text);
-        if (score > 0.5) throw new Error("VULGAR_CONTENT");
+        if (score > 0.5) throw new Error("VULGAR_CAPTION");
         console.log(req.file.path);
         const post = new Post({
             text: req.body.text,
@@ -160,8 +162,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
         });
         let user = await User.findById(req.user.id);
         user.posts.push({ id: post._id, image: post.image });
-        await post.save();
-        await user.save();
+        // await post.save();
+        // await user.save();
         res.json({ status: "posted", post: post, image: req.file.path });
     } catch (e) {
         res.status(500).json({ error: e.message });
