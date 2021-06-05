@@ -35,10 +35,13 @@ file_name = "././ML/models/kmeans.pkl"
 open_file = open(file_name, "rb")
 kmeans = pickle.load(open_file)
 open_file.close()
-im = Image.open(r"././ML/images/img.jpg")
-img = [im]        # yaha image daalni hai
+
+img = glob.glob(f'././{sys.argv[1]}')
+print(img)
+# img = sys.argv[1]        # yaha image daalni hai
+
 input_features = []
-img = image.load_img(img, target_size=model.input_shape[1:3])
+img = image.load_img(img[0], target_size=model.input_shape[1:3])
 x = image.img_to_array(img)
 x = np.expand_dims(x, axis=0)
 x = preprocess_input(x)
