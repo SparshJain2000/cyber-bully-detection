@@ -9,6 +9,7 @@ const transformComment = async (comment) => {
         console.log(e);
     }
 };
+
 const populateComment = (post) => {
     // console.log(comments);
 
